@@ -41,13 +41,17 @@ class Openid4VpUtils {
 	}
 
 	static func generateOpenId4VpHandover(clientId: String,	responseUri: String, nonce: String,	mdocGeneratedNonce: String) -> CBOR {
-		let clientIdToHash = CBOR.encodeArray([clientId, mdocGeneratedNonce])
-		let responseUriToHash = CBOR.encodeArray([responseUri, mdocGeneratedNonce])
-
-		let clientIdHash = [UInt8](SHA256.hash(data: clientIdToHash))
-		let responseUriHash = [UInt8](SHA256.hash(data: responseUriToHash))
-
-		return CBOR.array([.byteString(clientIdHash), .byteString(responseUriHash), .utf8String(nonce)])
+//		The following lines commented out refer to the EU implementation of https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#name-handover-and-sessiontranscr which is an incorrect CBOR structure.
+//		let clientIdToHash = CBOR.encodeArray([clientId, mdocGeneratedNonce])
+//		let responseUriToHash = CBOR.encodeArray([responseUri, mdocGeneratedNonce])
+//
+//		let clientIdHash = [UInt8](SHA256.hash(data: clientIdToHash))
+//		let responseUriHash = [UInt8](SHA256.hash(data: responseUriToHash))
+//
+//		return CBOR.array([.byteString(clientIdHash), .byteString(responseUriHash), .utf8String(nonce)])
+		
+		// Support for Verify diagency 2025.09 release.
+		return CBOR.array([.utf8String(clientId), .utf8String(nonce), CBOR.null, .utf8String(responseUri)])
 	}
 
 	static func generateMdocGeneratedNonce() -> String {
